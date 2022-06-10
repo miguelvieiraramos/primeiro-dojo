@@ -22,6 +22,6 @@
   },
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "jest"
+    "test": "jest --forceExit"
   }
 }
