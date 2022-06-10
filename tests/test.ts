@@ -1,21 +1,12 @@
 import request from 'supertest'
 import app from '../src/server'
 import 'dotenv/config'
-import { Client } from 'pg';
+import database from '../src/pool'
 
-let database: Client;
 
 beforeAll(async () => {
-    database = new Client({
-        user: process.env.DATABASE_USERNAME,
-        host: process.env.DATABASE_HOST,
-        database: process.env.DATABASE_NAME,
-        password: process.env.DATABASE_PASSWORD,
-        port: 5432,
-    })
-    await database.connect()
-
     await database.query('CREATE TABLE IF NOT EXISTS "user_dojo" (id VARCHAR(50) PRIMARY KEY, name VARCHAR(100) NOT NULL, document VARCHAR(14) UNIQUE NOT NULL)');
+    await database.query("TRUNCATE user_dojo;")
 })
 
 afterAll(async () => {
@@ -34,6 +25,20 @@ describe("API", () => {
         request(app)
             .post("/users")
             .send({ name: "John Doe", document: "40228922" })
+            .expect(201)
+            .end(function (err, res) {
+                if (err) return done(err);
+                return done();
+            });
+    })
+
+    test("Create an user 2", (done) => {
+        /**
+         * id, name, document
+         */
+        request(app)
+            .post("/users")
+            .send({ name: "Doe John", document: "12346" })
             .expect(201)
             .end(function (err, res) {
                 if (err) return done(err);
