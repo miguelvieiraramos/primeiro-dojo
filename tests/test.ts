@@ -22,6 +22,10 @@ afterAll(async () => {
     await database.end()
 })
 
+afterEach(async() => {
+    await database.query("TRUNCATE user_dojo;")
+})
+
 describe("API", () => {
     test("Create an user", (done) => {
         /**
